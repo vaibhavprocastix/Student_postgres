@@ -40,7 +40,7 @@ const StudentList = () => {
   //delete a student
   const deleteStudent = (id) => {
     axios
-      .delete(`${process.env.REACT_APP_BACKEND_URL}/${id}`)
+      .delete(`${process.env.REACT_APP_BACKEND_URL}/students/${id}`)
       .then((response) => {
         console.log("Student deleted successfully:", response.data);
         setStudents(students.filter((student) => student.id !== id));
