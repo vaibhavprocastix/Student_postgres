@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import SkeletonLoader from "./SkeletonLoader";
 const StudentList = () => {
   const [students, setStudents] = useState([]);
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
-
+  const [loading, setLoading] = useState(true);
   // Fetch students from backend
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_BACKEND_URL}/students`)
       .then((response) => {
         setStudents(response.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching students:", err);
+        setLoading(false);
       });
   }, []);
 
@@ -56,28 +58,31 @@ const StudentList = () => {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Student List
         </h1>
-        <ul className="divide-y divide-gray-200 mb-8">
-          {students.map((student) => (
-            <li
-              key={student.id}
-              className="py-4 flex justify-between items-center"
-            >
-              <span className="text-lg font-medium text-gray-700 w-1/3 text-left">
-                {student.name}
-              </span>
-              <span className="text-sm text-gray-500 mt-1 w-1/3 text-center">
-                {student.age} years old
-              </span>
-              <button
-                onClick={() => deleteStudent(student.id)}
-                className="text-red-500 hover:text-red-700 transition duration-200 w-1/3 text-right"
+        {loading ? (
+          <SkeletonLoader />
+        ) : (
+          <ul className="divide-y divide-gray-200 mb-8">
+            {students.map((student) => (
+              <li
+                key={student.id}
+                className="py-4 flex justify-between items-center"
               >
-                delete
-              </button>
-            </li>
-          ))}
-        </ul>
-
+                <span className="text-lg font-medium text-gray-700 w-1/3 text-left">
+                  {student.name}
+                </span>
+                <span className="text-sm text-gray-500 mt-1 w-1/3 text-center">
+                  {student.age} years old
+                </span>
+                <button
+                  onClick={() => deleteStudent(student.id)}
+                  className="text-red-500 hover:text-red-700 transition duration-200 w-1/3 text-right"
+                >
+                  delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Add Student
         </h2>
