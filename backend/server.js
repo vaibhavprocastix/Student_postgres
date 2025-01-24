@@ -25,6 +25,23 @@ app.get("/students", async (req, res) => {
   }
 });
 
+app.put("/students/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, age } = req.body;
+  try {
+    const result = await pool.query(
+      "UPDATE students SET name = $1, age = $2 WHERE id = $3 RETURNING *",
+      [name, age, id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).send(`Student with ID ${id} not found.`);
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 app.post("/students", async (req, res) => {
   const { name, age } = req.body;
   try {
